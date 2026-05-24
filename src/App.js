@@ -1,11 +1,9 @@
-import './App.css';
+import Body from './components/Body';
 
 const App = () => {
   return (
     <div className="App">
-      <h1 >
-        Welcome to My shatata App
-      </h1>
+      <Body />
     </div>
   );
 }
