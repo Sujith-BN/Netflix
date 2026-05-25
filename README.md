@@ -2,6 +2,17 @@
 
 - Created react app
 - Configured tailwindcss
+- Header
+- Routing
+- Login form
+- Signup form
+- useRef Hook
+- firebase setup
+- Deploying app to production
+- created user signup account
+- implement signin user api
+- created redux store with user slice
+- implemeneted signout
 
 # Features
 
