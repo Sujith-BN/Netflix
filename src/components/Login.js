@@ -49,8 +49,7 @@ const Login = () => {
             updateProfile(user, {
                 displayName: name.current.value , photoURL: ""
                 }).then(() => {
-                    
-                navigate("/browse");
+              
              
                 }).catch((error) => {
               

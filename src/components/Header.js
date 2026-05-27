@@ -1,61 +1,76 @@
-import React from 'react'
-import { signOut } from "firebase/auth";
-import { auth } from '../utils/firebaseconfig';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+// Header.js
+
+import React, { useEffect } from "react";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../utils/firebaseconfig";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { LOGO, USER_LOGO } from "../utils/constants";
+import { addUser, removeUser } from "../utils/userSlice";
 
 const Header = () => {
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const userData = useSelector((state) => state.user);
+
   const displayName = userData?.displayName;
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { displayName, email, uid } = user;
 
+        dispatch(
+          addUser({
+            displayName,
+            email,
+            uid,
+          }),
+        );
 
-  const signOutHandler = () =>{
-    signOut(auth).then(() => {
-      navigate("/");
-      
-    }).catch((error) => {
-      // An error happened.
+        navigate("/browse");
+      } else {
+        dispatch(removeUser());
+
+        navigate("/");
+      }
     });
-  }
+
+    return () => unsubscribe();
+  }, []);
+
+  const signOutHandler = () => {
+    signOut(auth).catch((error) => {
+      console.log(error);
+    });
+  };
 
   return (
-    <>
-   <div className="flex items-center justify-between px-6 py-4">
+    <div className="absolute top-0 left-0 w-full z-50 px-4 md:px-10 py-4 flex items-center justify-between bg-gradient-to-b from-black">
+      <img className="w-44 object-contain" src={LOGO} alt="Netflix Logo" />
 
-      <img
-        className="w-32 object-contain"
-        src="https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production_2026-05-14/consent/87b6a5c0-0104-4e96-a291-092c11350111/019ae4b5-d8fb-7693-90ba-7a61d24a8837/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png"
-        alt="Netflix Logo"
-      />
+      {userData && (
+        <div className="flex items-center gap-5">
+          <p className="text-white text-lg font-medium">{displayName}</p>
 
-  
-    {userData && (
-        <div className="flex items-center gap-4">
-        <p className="text-white text-xl font-semibold" >{displayName}</p>
-        <img
-          className="w-10 h-10 rounded-sm"
-          src="https://occ-0-4994-2186.1.nflxso.net/dnm/api/v6/SO2HoVCx33X8phZh2pZZmQ4QgNY/AAAABS8sWFjSyj1zyfgcnGamqyJ1E2ZubZGo8dndCM_ipf_5UpmVlkuf8IXzQlmPZQqTMWNjWukESRdLkFGHnf7zbY3MJCO3r4s.png?r=229"
-          alt="User Logo"
-        />
+          <img
+            className="w-10 h-10 rounded-md"
+            src={USER_LOGO}
+            alt="User Logo"
+          />
 
-        <button 
-        onClick={signOutHandler}
-        className="text-white bg-red-600 px-4 py-2 rounded-sm text-sm font-semibold">
-          Sign Out
-        </button>
+          <button
+            onClick={signOutHandler}
+            className="text-white bg-red-600 hover:bg-red-700 px-5 py-2 rounded-md text-sm font-semibold transition duration-200"
+          >
+            Sign Out
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
-      </div>)}
-
-  </div>
-    <hr className='mt-2 border-t-[0.5px] border-gray-500'></hr>
-
-    
-    </>
-   
-   
-  )
-}
-
-export default Header
+export default Header;

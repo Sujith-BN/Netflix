@@ -1,12 +1,17 @@
-import React from 'react'
-import Header from './Header';
-const Browse = () => {
-  return (
-    <div>
-      <Header />
-      <h1 className='text-white text-center text-2xl'>Why are you gay</h1>
-    </div>
-  )
-}
+import React from "react";
+import Header from "./Header";
+import useGetNowPlayingMovies from "../hooks/useGetNowPlayingMovies";
+import PlayingMovieContainer from "./PlayingMovieContainer";
 
-export default Browse
+const Browse = () => {
+  useGetNowPlayingMovies();
+
+  return (
+    <div className="bg-black min-h-screen overflow-x-hidden">
+      <Header />
+      <PlayingMovieContainer />
+    </div>
+  );
+};
+
+export default Browse;
